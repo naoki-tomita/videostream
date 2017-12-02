@@ -11,5 +11,8 @@
     "socket.io": "^2.0.4",
     "ts-node": "^3.3.0",
     "typescript": "^2.6.2"
+  },
+  "scripts": {
+    "start": "ts-node index.ts"
   }
 }

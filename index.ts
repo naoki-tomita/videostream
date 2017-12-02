@@ -1,10 +1,8 @@
-import * as socket from "socket.io";
 import * as express from "express";
 import * as fs from "fs";
 import { URL } from "url";
 
 const app = express();
-const server = socket(8080);
 
 async function readFile(path: string | number | Buffer | URL) {
   return new Promise((resolve, reject) => {
@@ -64,8 +62,8 @@ function parseRange(rangeStr: string) {
   const [ type, range ] = rangeStr.split("=");
   const [ start, end ] = range.split("-").map(x => Number.parseInt(x, 10));
   return {
-    start,
-    end,
+    start: isNaN(start) ? undefined : start,
+    end: isNaN(end) ? undefined : end,
   };
 }
 
@@ -93,15 +91,12 @@ app.get("/video", async (req, res, next) => {
   }
   const { size } = await readFileStatus(FILE_NAME);
   const range = parseRange(rangeStr);
-  // res.writeHead(206, {
-  //   "content-type": "video/mp4",
-  //   "content-range": "bytes " + range.start + "-" + size + "/" + size,
-  //   "content-length": size - range.start,
-  // });
-  res.writeHead(200, {
+  const { start, end = size - 1 } = range;
+  res.writeHead(206, {
+    "accept-ranges": "bytes",
     "content-type": "video/mov",
-    "content-range": "bytes " + range.start + "-" + size + "/" + size,
-    "content-length": size - range.start,
+    "content-range": "bytes " + start + "-" + end + "/" + size,
+    "content-length": end - start + 1,
   });
   await readFileStream({ 
     path: FILE_NAME, 
@@ -113,4 +108,8 @@ app.get("/video", async (req, res, next) => {
 
 app.listen(8000, "0.0.0.0");
 
-server.on("connection", s => {});
+
+
+
+
+
