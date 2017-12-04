@@ -2,7 +2,7 @@ import { Configuration } from "webpack";
 import * as path from "path";
 
 const config: Configuration = {
-  entry: "./webapp/scripts/App.ts",
+  entry: "./src/webapp/scripts/App.ts",
   output: {
     filename: "[name].js",
     path: path.join(__dirname, "pub/js")

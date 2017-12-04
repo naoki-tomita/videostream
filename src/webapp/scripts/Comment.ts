@@ -39,7 +39,7 @@ export class Comments {
     const comments = await this.list();
     const now = this.video.now();
     comments
-      .filter(c => (c.time > now && c.time < now + 0.5))
+      .filter(c => (c.time >= now && c.time < now + 0.5))
       .forEach(c => this.show(c.comment));
     setTimeout(this.playing.bind(this), 500);
   }

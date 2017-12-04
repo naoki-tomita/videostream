@@ -228,7 +228,7 @@ var Comments = /** @class */ (function () {
                         comments = _a.sent();
                         now = this.video.now();
                         comments
-                            .filter(function (c) { return (c.time > now && c.time < now + 0.5); })
+                            .filter(function (c) { return (c.time >= now && c.time < now + 0.5); })
                             .forEach(function (c) { return _this.show(c.comment); });
                         setTimeout(this.playing.bind(this), 500);
                         return [2 /*return*/];

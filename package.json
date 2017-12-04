@@ -24,10 +24,10 @@
   },
   "scripts": {
     "preinit": "trash ./db.db",
-    "init": "ts-node Init.ts",
+    "init": "ts-node ./src/server/Init.ts",
     "prestart": "run-s build",
     "start": "run-p serve",
-    "serve": "ts-node App.ts",
+    "serve": "ts-node ./src/server/App.ts",
     "build": "run-p build:*",
     "build:html": "cpx \"./webapp/*.html\" \"./pub/\"",
     "build:ts": "webpack"
