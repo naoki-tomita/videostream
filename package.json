@@ -8,15 +8,28 @@
     "@types/express": "^4.0.39",
     "@types/socket.io": "^1.4.31",
     "@types/sqlite3": "^3.1.1",
+    "@types/webpack": "^3.8.1",
+    "awesome-typescript-loader": "^3.4.1",
     "body-parser": "^1.18.2",
+    "cpx": "^1.5.0",
     "express": "^4.16.2",
     "local-web-server": "^2.3.0",
+    "npm-run-all": "^4.1.2",
     "socket.io": "^2.0.4",
     "sqlite3": "^3.1.13",
+    "trash-cli": "^1.4.0",
     "ts-node": "^3.3.0",
-    "typescript": "^2.6.2"
+    "typescript": "^2.6.2",
+    "webpack": "^3.9.1"
   },
   "scripts": {
-    "start": "ts-node app.ts"
+    "preinit": "trash ./db.db",
+    "init": "ts-node Init.ts",
+    "prestart": "run-s build",
+    "start": "run-p serve",
+    "serve": "ts-node App.ts",
+    "build": "run-p build:*",
+    "build:html": "cpx \"./webapp/*.html\" \"./pub/\"",
+    "build:ts": "webpack"
   }
 }

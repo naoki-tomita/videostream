@@ -1,5 +1,5 @@
 import { readdir } from "../utils";
-import { exec, get, all } from "./sqlite";
+import { exec, get, all } from "./Sqlite3";
 
 export async function createTable() {
   await createFileTable();

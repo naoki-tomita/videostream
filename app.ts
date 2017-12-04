@@ -20,8 +20,8 @@ function staticRouter(base: string) {
     });
   }
 }
-app.get("/app/js/:file", staticRouter("app/js"));
-app.get("/app/:file", staticRouter("app"));
+app.get("/app/js/:file", staticRouter("pub/js"));
+app.get("/app/:file", staticRouter("pub"));
 
 app.get("/video/:id", async (req, res, next) => {
   let rangeStr = req.headers.range;
@@ -42,12 +42,14 @@ app.post("/comment/:id", async (req, res, next) => {
   const id = req.params.id;
   const { comment, time } = req.body;
   addComment(id, time, comment);
+  res.setHeader("content-type", "application/json; encoding=utf8");
   res.end();
 });
 
 app.get("/comment/:id", async (req, res, next) => {
   const id = req.params.id;
   const comments = await getComments(id);
+  res.setHeader("content-type", "application/json; encoding=utf8");
   res.end(JSON.stringify(comments));
 });
 
