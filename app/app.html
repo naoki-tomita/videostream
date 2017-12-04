@@ -1,0 +1,8 @@
+<video id="video" width="520" controls></video>
+<script>
+  const video = document.getElementById("video");
+  const queryStr = location.href.split("?")[1];
+  const query = {};
+  queryStr.split("&").map(q => q.split("=")).forEach(q => query[q[0]] = q[1]);
+  video.setAttribute("src", `/video/${query.id}`);
+</script>
