@@ -11,6 +11,17 @@ export async function get(sql: string): Promise<any> {
   });
 }
 
+export async function all(sql: string): Promise<any[]> {
+  return new Promise<any[]>((resolve, reject) => {
+    db.all(sql, (err: Error, row: any[]) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve(row);
+    });
+  });
+}
+
 export async function exec(sql: string): Promise<any> {
   return new Promise<any>((resolve, reject) => {
     db.exec(sql, (err: Error) => {

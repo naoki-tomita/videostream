@@ -1,5 +1,5 @@
 import { readdir } from "../utils";
-import { exec, get } from "./sqlite";
+import { exec, get, all } from "./sqlite";
 
 export async function createTable() {
   await createFileTable();
@@ -36,7 +36,7 @@ export async function fileName(id: number) {
 }
 
 export async function addComment(fileId: number, time: number, comment: string) {
-  await exec(`INSERT INTO comment_table (
+  return await exec(`INSERT INTO comment_table (
     file_id, 
     time, 
     comment
@@ -45,4 +45,8 @@ export async function addComment(fileId: number, time: number, comment: string) 
     ${time}, 
     "${comment}"
   )`);
+}
+
+export async function getComments(fileId: number) {
+  return await all(`SELECT * FROM comment_table WHERE file_id=${fileId} ORDER BY time`);
 }

@@ -3,7 +3,7 @@ import * as bodyParser from "body-parser";
 import { parseRange } from "./scripts/utils";
 import { progressiveResponse } from "./scripts/Response/ProgressiveResponse";
 import { staticFile } from "./scripts/Response/StaticFile";
-import { fileName, addComment } from "./scripts/Database/Video";
+import { fileName, addComment, getComments } from "./scripts/Database/Video";
 
 const app = express();
 app.use(bodyParser.urlencoded({
@@ -43,6 +43,12 @@ app.post("/comment/:id", async (req, res, next) => {
   const { comment, time } = req.body;
   addComment(id, time, comment);
   res.end();
+});
+
+app.get("/comment/:id", async (req, res, next) => {
+  const id = req.params.id;
+  const comments = await getComments(id);
+  res.end(JSON.stringify(comments));
 });
 
 app.listen(8000, "0.0.0.0");
