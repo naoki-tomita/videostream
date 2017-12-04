@@ -12,7 +12,7 @@ export async function staticFile({
   try {
     const data = await readFile(path);
     response.writeHead(200, {
-      "content-type": getContentType(path),
+      "content-type": `${getContentType(path)}; charset=utf8`,
     });
     response.end(data);
   } catch (e) {

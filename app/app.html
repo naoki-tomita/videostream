@@ -1,8 +1,26 @@
 <video id="video" width="520" controls></video>
+<input id="comment" type="text"><button id="send">コメント</button>
 <script>
   const video = document.getElementById("video");
   const queryStr = location.href.split("?")[1];
   const query = {};
   queryStr.split("&").map(q => q.split("=")).forEach(q => query[q[0]] = q[1]);
   video.setAttribute("src", `/video/${query.id}`);
+
+  const comment = document.getElementById("comment");
+  const send = document.getElementById("send");
+  send.addEventListener("click", async () => {
+    const com = comment.value;
+    const time = video.currentTime;
+    await fetch(`/comment/${query.id}`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json"
+      },
+      body: JSON.stringify({
+        comment: com,
+        time: time,
+      }),
+    });
+  });
 </script>

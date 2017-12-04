@@ -4,9 +4,11 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "@types/body-parser": "^1.16.8",
     "@types/express": "^4.0.39",
     "@types/socket.io": "^1.4.31",
     "@types/sqlite3": "^3.1.1",
+    "body-parser": "^1.18.2",
     "express": "^4.16.2",
     "local-web-server": "^2.3.0",
     "socket.io": "^2.0.4",

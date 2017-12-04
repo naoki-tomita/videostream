@@ -1,10 +1,15 @@
 import * as express from "express";
+import * as bodyParser from "body-parser";
 import { parseRange } from "./scripts/utils";
 import { progressiveResponse } from "./scripts/Response/ProgressiveResponse";
 import { staticFile } from "./scripts/Response/StaticFile";
-import { fileName } from "./scripts/Database/Video";
+import { fileName, addComment } from "./scripts/Database/Video";
 
 const app = express();
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+app.use(bodyParser.json());
 
 function staticRouter(base: string) {
   return async (req: express.Request, res: express.Response, next: express.RequestHandler) => {
@@ -34,7 +39,10 @@ app.get("/video/:id", async (req, res, next) => {
 });
 
 app.post("/comment/:id", async (req, res, next) => {
-  
+  const id = req.params.id;
+  const { comment, time } = req.body;
+  addComment(id, time, comment);
+  res.end();
 });
 
 app.listen(8000, "0.0.0.0");
