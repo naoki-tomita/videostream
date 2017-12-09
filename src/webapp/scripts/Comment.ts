@@ -19,7 +19,7 @@ export class Comments {
     this.sendBtn.addEventListener("click", () => {
       const comment = this.comment.value;
       const currentTime = this.video.now();
-      this.send(comment, currentTime);
+      sendComment(comment, currentTime);
       this.show(comment);
     });
     this.video.onPlay(this.play.bind(this));
@@ -38,7 +38,7 @@ export class Comments {
     if (!this.isPlaying) {
       return;
     }
-    const comments = await this.list();
+    const comments = await listComment();
     const now = this.video.now();
     comments
       .filter(c => (c.time >= now && c.time < now + 0.5))
@@ -55,26 +55,6 @@ export class Comments {
     this.isPlaying = false;
   }
 
-  async list(): Promise<Array<{
-    comment: string;
-    time: number;
-  }>> {
-    const id = query("id");
-    const list = await fetch(`/apis/comments/${id}`);
-    return await list.json() as Array<{comment: string, time: number}>;
-  }
-
-  async send(comment: string, time: number) {
-    const id = query("id");
-    const body = { comment, time };
-    const headers = new Headers({ "content-type": "application/json" });
-    return await fetch(`/apis/comments/${id}`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(body),
-    });
-  }
-
   show(comment: string) {
     const el = document.createElement("div");
     el.innerHTML = comment;
@@ -83,4 +63,24 @@ export class Comments {
       this.commentView.removeChild(el);
     }, 3000);
   }
+}
+
+async function sendComment(comment: string, time: number) {
+  const id = query("id");
+  const body = { comment, time };
+  const headers = new Headers({ "content-type": "application/json" });
+  return await fetch(`/apis/comments/${id}`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+  });
+}
+
+async function listComment(): Promise<Array<{
+  comment: string;
+  time: number;
+}>> {
+  const id = query("id");
+  const list = await fetch(`/apis/comments/${id}`);
+  return await list.json() as Array<{comment: string, time: number}>;
 }
