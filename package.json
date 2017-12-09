@@ -29,7 +29,7 @@
     "start": "run-p serve",
     "serve": "ts-node ./src/server/App.ts",
     "build": "run-p build:*",
-    "build:html": "cpx \"./webapp/*.html\" \"./pub/\"",
+    "build:html": "cpx \"./src/webapp/*.html\" \"./pub/\"",
     "build:ts": "webpack"
   }
 }

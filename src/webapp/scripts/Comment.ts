@@ -2,15 +2,15 @@ import { Video } from "./Video";
 import { query } from "./Query";
 
 export class Comments {
-  commentView: HTMLDivElement;
+  commentView: CommentView;
   comment: HTMLInputElement;
   sendBtn: HTMLButtonElement;
   video: Video;
   isPlaying: boolean = false;
   constructor(video: Video) {
-    this.commentView = document.getElementById("comments") as HTMLDivElement;
     this.comment = document.getElementById("comment") as HTMLInputElement;
     this.sendBtn = document.getElementById("send") as HTMLButtonElement;
+    this.commentView = new CommentView();
     this.video = video;
     this.initEvents();
   }
@@ -20,7 +20,7 @@ export class Comments {
       const comment = this.comment.value;
       const currentTime = this.video.now();
       sendComment(comment, currentTime);
-      this.show(comment);
+      this.addComment(comment);
     });
     this.video.onPlay(this.play.bind(this));
     this.video.onPause(this.pause.bind(this));
@@ -42,7 +42,7 @@ export class Comments {
     const now = this.video.now();
     comments
       .filter(c => (c.time >= now && c.time < now + 0.5))
-      .forEach(c => this.show(c.comment));
+      .forEach(c => this.addComment(c.comment));
     // bug included...
     // when click button repeatedly interval less than 500ms, polling will be executed twice time.
     setTimeout(this.polling.bind(this), 500);
@@ -55,13 +55,60 @@ export class Comments {
     this.isPlaying = false;
   }
 
-  show(comment: string) {
-    const el = document.createElement("div");
-    el.innerHTML = comment;
-    this.commentView.appendChild(el);
-    setTimeout(() => {
-      this.commentView.removeChild(el);
-    }, 3000);
+  addComment(comment: string) {
+    this.commentView.addComment(comment);
+  }
+}
+
+type CommentElement = {
+  pos: {
+    x: number;
+    y: number;
+  };
+  text: string;
+}
+class CommentView {
+  private context: CanvasRenderingContext2D;
+  comments: CommentElement[] = [];
+  maxWidth: number;
+  maxHeight: number;
+  constructor() {
+    const el = document.getElementById("comments") as HTMLCanvasElement
+    this.context = el.getContext("2d");
+    this.maxWidth = el.width;
+    this.maxHeight = el.height;
+    this.animate();
+  }
+
+  addComment(comment: string) {
+    this.comments.push({
+      pos: {
+        x: this.maxWidth,
+        y: Math.random() * this.maxHeight,
+      },
+      text: comment,
+    });
+  }
+
+  render() {
+    this.context.clearRect(0, 0, this.maxWidth, this.maxHeight);
+    this.comments.forEach(c => this.renderComment(c));
+    this.comments.forEach(c => c.pos.x -= 1);
+    this.comments = this.comments.filter(c => c.pos.x >= 0);
+  }
+
+  renderComment(comment: CommentElement) {
+    this.context.font = "15px メイリオ";
+    this.context.strokeStyle = "white";
+    this.context.lineWidth = 3;
+    this.context.fillStyle = "black";
+    this.context.strokeText(comment.text, comment.pos.x, comment.pos.y);
+    this.context.fillText(comment.text, comment.pos.x, comment.pos.y);
+  }
+
+  animate() {
+    requestAnimationFrame(this.animate.bind(this));
+    this.render();
   }
 }
 

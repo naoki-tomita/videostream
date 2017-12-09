@@ -242,9 +242,9 @@ var Query_1 = __webpack_require__(0);
 var Comments = /** @class */ (function () {
     function Comments(video) {
         this.isPlaying = false;
-        this.commentView = document.getElementById("comments");
         this.comment = document.getElementById("comment");
         this.sendBtn = document.getElementById("send");
+        this.commentView = new CommentView();
         this.video = video;
         this.initEvents();
     }
@@ -253,8 +253,8 @@ var Comments = /** @class */ (function () {
         this.sendBtn.addEventListener("click", function () {
             var comment = _this.comment.value;
             var currentTime = _this.video.now();
-            _this.send(comment, currentTime);
-            _this.show(comment);
+            sendComment(comment, currentTime);
+            _this.addComment(comment);
         });
         this.video.onPlay(this.play.bind(this));
         this.video.onPause(this.pause.bind(this));
@@ -276,13 +276,15 @@ var Comments = /** @class */ (function () {
                         if (!this.isPlaying) {
                             return [2 /*return*/];
                         }
-                        return [4 /*yield*/, this.list()];
+                        return [4 /*yield*/, listComment()];
                     case 1:
                         comments = _a.sent();
                         now = this.video.now();
                         comments
                             .filter(function (c) { return (c.time >= now && c.time < now + 0.5); })
-                            .forEach(function (c) { return _this.show(c.comment); });
+                            .forEach(function (c) { return _this.addComment(c.comment); });
+                        // bug included...
+                        // when click button repeatedly interval less than 500ms, polling will be executed twice time.
                         setTimeout(this.polling.bind(this), 500);
                         return [2 /*return*/];
                 }
@@ -295,53 +297,86 @@ var Comments = /** @class */ (function () {
         }
         this.isPlaying = false;
     };
-    Comments.prototype.list = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var id, list;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        id = Query_1.query("id");
-                        return [4 /*yield*/, fetch("/apis/comments/" + id)];
-                    case 1:
-                        list = _a.sent();
-                        return [4 /*yield*/, list.json()];
-                    case 2: return [2 /*return*/, _a.sent()];
-                }
-            });
-        });
-    };
-    Comments.prototype.send = function (comment, time) {
-        return __awaiter(this, void 0, void 0, function () {
-            var id, body, headers;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        id = Query_1.query("id");
-                        body = { comment: comment, time: time };
-                        headers = new Headers({ "content-type": "application/json" });
-                        return [4 /*yield*/, fetch("/apis/comments/" + id, {
-                                method: "POST",
-                                headers: headers,
-                                body: JSON.stringify(body),
-                            })];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
-            });
-        });
-    };
-    Comments.prototype.show = function (comment) {
-        var _this = this;
-        var el = document.createElement("div");
-        el.innerHTML = comment;
-        this.commentView.appendChild(el);
-        setTimeout(function () {
-            _this.commentView.removeChild(el);
-        }, 3000);
+    Comments.prototype.addComment = function (comment) {
+        this.commentView.addComment(comment);
     };
     return Comments;
 }());
 exports.Comments = Comments;
+var CommentView = /** @class */ (function () {
+    function CommentView() {
+        this.comments = [];
+        var el = document.getElementById("comments");
+        this.context = el.getContext("2d");
+        this.maxWidth = el.width;
+        this.maxHeight = el.height;
+        this.animate();
+    }
+    CommentView.prototype.addComment = function (comment) {
+        this.comments.push({
+            pos: {
+                x: this.maxWidth,
+                y: Math.random() * this.maxHeight,
+            },
+            text: comment,
+        });
+    };
+    CommentView.prototype.render = function () {
+        var _this = this;
+        this.context.clearRect(0, 0, this.maxWidth, this.maxHeight);
+        this.comments.forEach(function (c) { return _this.renderComment(c); });
+        this.comments.forEach(function (c) { return c.pos.x -= 1; });
+        this.comments = this.comments.filter(function (c) { return c.pos.x >= 0; });
+    };
+    CommentView.prototype.renderComment = function (comment) {
+        this.context.font = "15px メイリオ";
+        this.context.strokeStyle = "white";
+        this.context.lineWidth = 3;
+        this.context.fillStyle = "black";
+        this.context.strokeText(comment.text, comment.pos.x, comment.pos.y);
+        this.context.fillText(comment.text, comment.pos.x, comment.pos.y);
+    };
+    CommentView.prototype.animate = function () {
+        requestAnimationFrame(this.animate.bind(this));
+        this.render();
+    };
+    return CommentView;
+}());
+function sendComment(comment, time) {
+    return __awaiter(this, void 0, void 0, function () {
+        var id, body, headers;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    id = Query_1.query("id");
+                    body = { comment: comment, time: time };
+                    headers = new Headers({ "content-type": "application/json" });
+                    return [4 /*yield*/, fetch("/apis/comments/" + id, {
+                            method: "POST",
+                            headers: headers,
+                            body: JSON.stringify(body),
+                        })];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    });
+}
+function listComment() {
+    return __awaiter(this, void 0, void 0, function () {
+        var id, list;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    id = Query_1.query("id");
+                    return [4 /*yield*/, fetch("/apis/comments/" + id)];
+                case 1:
+                    list = _a.sent();
+                    return [4 /*yield*/, list.json()];
+                case 2: return [2 /*return*/, _a.sent()];
+            }
+        });
+    });
+}
 
 
 /***/ })
