@@ -16,11 +16,9 @@ class App {
     play.addEventListener("click", () => {
       if (playing) {
         this.video.pause();
-        this.comment.pause();
         play.innerHTML = "play";
       } else {
         this.video.play();
-        this.comment.play();
         play.innerHTML = "pause";
       }
       playing = !playing;

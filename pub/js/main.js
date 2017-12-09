@@ -87,7 +87,7 @@ exports.query = query;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Video_1 = __webpack_require__(2);
-var Comment_1 = __webpack_require__(3);
+var Comment_1 = __webpack_require__(4);
 var App = /** @class */ (function () {
     function App() {
         this.video = new Video_1.Video();
@@ -101,12 +101,10 @@ var App = /** @class */ (function () {
         play.addEventListener("click", function () {
             if (playing) {
                 _this.video.pause();
-                _this.comment.pause();
                 play.innerHTML = "play";
             }
             else {
                 _this.video.play();
-                _this.comment.play();
                 play.innerHTML = "pause";
             }
             playing = !playing;
@@ -123,14 +121,38 @@ window.App = App;
 
 "use strict";
 
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
 var Query_1 = __webpack_require__(0);
-var Video = /** @class */ (function () {
+var Observable_1 = __webpack_require__(3);
+var Video = /** @class */ (function (_super) {
+    __extends(Video, _super);
     function Video() {
+        var _this = _super.call(this) || this;
         var id = Query_1.query("id");
-        this.video = document.getElementById("video");
-        this.video.setAttribute("src", "/video/" + id);
+        _this.video = document.getElementById("video");
+        _this.video.setAttribute("src", "/videos/" + id);
+        _this.initEvents();
+        return _this;
     }
+    Video.prototype.initEvents = function () {
+        var _this = this;
+        this.video.addEventListener("play", function () {
+            _this.dispatch("play");
+        });
+        this.video.addEventListener("pause", function () {
+            _this.dispatch("pause");
+        });
+    };
     Video.prototype.play = function () {
         this.video.play();
     };
@@ -140,13 +162,42 @@ var Video = /** @class */ (function () {
     Video.prototype.now = function () {
         return this.video.currentTime;
     };
+    Video.prototype.onPlay = function (cb) {
+        this.on("play", cb);
+    };
+    Video.prototype.onPause = function (cb) {
+        this.on("pause", cb);
+    };
     return Video;
-}());
+}(Observable_1.Observable));
 exports.Video = Video;
 
 
 /***/ }),
 /* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Observable = /** @class */ (function () {
+    function Observable() {
+        this.events = {};
+    }
+    Observable.prototype.on = function (type, cb) {
+        this.events[type] || (this.events[type] = []);
+        this.events[type].push(cb);
+    };
+    Observable.prototype.dispatch = function (type) {
+        this.events[type] && this.events[type].forEach(function (e) { return e(); });
+    };
+    return Observable;
+}());
+exports.Observable = Observable;
+
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -205,15 +256,17 @@ var Comments = /** @class */ (function () {
             _this.send(comment, currentTime);
             _this.show(comment);
         });
+        this.video.onPlay(this.play.bind(this));
+        this.video.onPause(this.pause.bind(this));
     };
     Comments.prototype.play = function () {
         if (this.isPlaying) {
             return;
         }
         this.isPlaying = true;
-        this.playing();
+        this.polling();
     };
-    Comments.prototype.playing = function () {
+    Comments.prototype.polling = function () {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
             var comments, now;
@@ -230,7 +283,7 @@ var Comments = /** @class */ (function () {
                         comments
                             .filter(function (c) { return (c.time >= now && c.time < now + 0.5); })
                             .forEach(function (c) { return _this.show(c.comment); });
-                        setTimeout(this.playing.bind(this), 500);
+                        setTimeout(this.polling.bind(this), 500);
                         return [2 /*return*/];
                 }
             });
@@ -249,7 +302,7 @@ var Comments = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         id = Query_1.query("id");
-                        return [4 /*yield*/, fetch("/comment/" + id)];
+                        return [4 /*yield*/, fetch("/apis/comments/" + id)];
                     case 1:
                         list = _a.sent();
                         return [4 /*yield*/, list.json()];
@@ -267,7 +320,7 @@ var Comments = /** @class */ (function () {
                         id = Query_1.query("id");
                         body = { comment: comment, time: time };
                         headers = new Headers({ "content-type": "application/json" });
-                        return [4 /*yield*/, fetch("/comment/" + id, {
+                        return [4 /*yield*/, fetch("/apis/comments/" + id, {
                                 method: "POST",
                                 headers: headers,
                                 body: JSON.stringify(body),

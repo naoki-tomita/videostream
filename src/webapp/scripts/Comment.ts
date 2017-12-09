@@ -22,6 +22,8 @@ export class Comments {
       this.send(comment, currentTime);
       this.show(comment);
     });
+    this.video.onPlay(this.play.bind(this));
+    this.video.onPause(this.pause.bind(this));
   }
 
   play() {
@@ -29,10 +31,10 @@ export class Comments {
       return;
     }
     this.isPlaying = true;
-    this.playing();
+    this.polling();
   }
 
-  async playing() {
+  async polling() {
     if (!this.isPlaying) {
       return;
     }
@@ -41,7 +43,9 @@ export class Comments {
     comments
       .filter(c => (c.time >= now && c.time < now + 0.5))
       .forEach(c => this.show(c.comment));
-    setTimeout(this.playing.bind(this), 500);
+    // bug included...
+    // when click button repeatedly interval less than 500ms, polling will be executed twice time.
+    setTimeout(this.polling.bind(this), 500);
   }
 
   pause() {
@@ -56,7 +60,7 @@ export class Comments {
     time: number;
   }>> {
     const id = query("id");
-    const list = await fetch(`/comment/${id}`);
+    const list = await fetch(`/apis/comments/${id}`);
     return await list.json() as Array<{comment: string, time: number}>;
   }
 
@@ -64,7 +68,7 @@ export class Comments {
     const id = query("id");
     const body = { comment, time };
     const headers = new Headers({ "content-type": "application/json" });
-    return await fetch(`/comment/${id}`, {
+    return await fetch(`/apis/comments/${id}`, {
       method: "POST",
       headers,
       body: JSON.stringify(body),

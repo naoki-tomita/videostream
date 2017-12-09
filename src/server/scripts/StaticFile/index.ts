@@ -1,6 +1,13 @@
+import { join } from "path";
+import { Response, Router } from "express";
 import { readFile, getContentType } from "../utils";
-import { Response } from "express";
-import { notFound } from "./404";
+import { notFound } from "../Error/404";
+
+export const router = Router();
+router.use((req, res, next) => {
+  const path = join("./pub", req.path);
+  staticFile({path, response: res});
+});
 
 export async function staticFile({
   path,
@@ -16,6 +23,7 @@ export async function staticFile({
     });
     response.end(data);
   } catch (e) {
+    console.log(e);
     notFound(response);
   }
 }
