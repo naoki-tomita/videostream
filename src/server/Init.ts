@@ -1,4 +1,4 @@
-import { createTable, fileName, addVideo } from "./scripts/Database/Video";
+import { createTable, fileName, addVideo } from "./scripts/Database";
 import { readdir } from "./scripts/utils";
 import { basename } from "path";
 

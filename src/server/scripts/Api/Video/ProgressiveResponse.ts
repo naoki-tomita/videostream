@@ -1,7 +1,7 @@
 import { Response, Router } from "express";
 import { createReadStream } from "fs";
-import { readFileStatus, getContentType } from "../utils";
-import { notFound } from "../Error/404";
+import { readFileStatus, getContentType } from "../../utils";
+import { notFound } from "../../Error/404";
 
 export async function progressiveResponse({
   path,

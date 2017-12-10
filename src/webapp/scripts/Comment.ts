@@ -116,7 +116,7 @@ async function sendComment(comment: string, time: number) {
   const id = query("id");
   const body = { comment, time };
   const headers = new Headers({ "content-type": "application/json" });
-  return await fetch(`/apis/comments/${id}`, {
+  return await fetch(`/apis/videos/${id}/comments`, {
     method: "POST",
     headers,
     body: JSON.stringify(body),
@@ -128,6 +128,6 @@ async function listComment(): Promise<Array<{
   time: number;
 }>> {
   const id = query("id");
-  const list = await fetch(`/apis/comments/${id}`);
+  const list = await fetch(`/apis/videos/${id}/comments`);
   return await list.json() as Array<{comment: string, time: number}>;
 }

@@ -140,7 +140,7 @@ var Video = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         var id = Query_1.query("id");
         _this.video = document.getElementById("video");
-        _this.video.setAttribute("src", "/videos/" + id);
+        _this.video.setAttribute("src", "/apis/videos/" + id);
         _this.initEvents();
         return _this;
     }
@@ -351,7 +351,7 @@ function sendComment(comment, time) {
                     id = Query_1.query("id");
                     body = { comment: comment, time: time };
                     headers = new Headers({ "content-type": "application/json" });
-                    return [4 /*yield*/, fetch("/apis/comments/" + id, {
+                    return [4 /*yield*/, fetch("/apis/videos/" + id + "/comments", {
                             method: "POST",
                             headers: headers,
                             body: JSON.stringify(body),
@@ -368,7 +368,7 @@ function listComment() {
             switch (_a.label) {
                 case 0:
                     id = Query_1.query("id");
-                    return [4 /*yield*/, fetch("/apis/comments/" + id)];
+                    return [4 /*yield*/, fetch("/apis/videos/" + id + "/comments")];
                 case 1:
                     list = _a.sent();
                     return [4 /*yield*/, list.json()];

@@ -35,6 +35,10 @@ export async function fileName(id: number) {
   return file_name;
 }
 
+export async function listVideo() {
+  return await all(`SELECT * FROM file_table`);
+}
+
 export async function addComment(fileId: number, time: number, comment: string) {
   return await exec(`INSERT INTO comment_table (
     file_id, 
@@ -49,4 +53,8 @@ export async function addComment(fileId: number, time: number, comment: string) 
 
 export async function getComments(fileId: number) {
   return await all(`SELECT * FROM comment_table WHERE file_id=${fileId} ORDER BY time`);
+}
+
+export async function getComment(commentId: number) {
+  return await all(`SELECT * FROM comment_table WHERE id=${commentId}`)
 }

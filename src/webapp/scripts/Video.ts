@@ -7,7 +7,7 @@ export class Video extends Observable {
     super();
     const id = query("id");
     this.video = document.getElementById("video") as HTMLVideoElement;
-    this.video.setAttribute("src", `/videos/${id}`);
+    this.video.setAttribute("src", `/apis/videos/${id}`);
     this.initEvents();
   }
 
