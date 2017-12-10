@@ -2,13 +2,14 @@ import { Configuration } from "webpack";
 import * as path from "path";
 
 const config: Configuration = {
-  entry: "./src/webapp/scripts/App.ts",
+  entry: "./src/webapp/scripts/index.ts",
   output: {
     filename: "[name].js",
     path: path.join(__dirname, "pub/js")
   },
   resolve: {
-    extensions: [ ".ts" ],
+    // Add '.ts' and '.tsx' as resolvable extensions.
+    extensions: [".ts", ".tsx", ".js", ".json"]
   },
   module: {
     rules: [

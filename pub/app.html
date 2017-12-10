@@ -1,29 +1,4 @@
-<style type="text/css">
-.content {
-  position: relative;
-  display: inline-block;
-}
-.video {
-  position: relative;
-  width: 520px;
-}
-.comment {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  width: 100%;
-  height: 100%;
-}
-</style>
-
-<div class="content">
-  <video id="video" class="video" width="520" webkit-playsinline playsinline></video>
-  <canvas id="comments" class="comment"></canvas>
-</div>
-<div>
-  <button id="play">play</button><br>
-  <input id="comment" type="text"><button id="send">コメント</button>
-</div>
+<div id="app"></div>
 <script src="./pub/js/main.js"></script>
 <script>
   new window.App();

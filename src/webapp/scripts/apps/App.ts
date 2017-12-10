@@ -1,7 +1,7 @@
 import { Video } from "./Video";
 import { Comments } from "./Comment";
 
-class App {
+export class App {
   video: Video;
   comment: Comments;
   constructor() {
@@ -25,5 +25,3 @@ class App {
     });
   }
 }
-
-(window as any).App = App;
