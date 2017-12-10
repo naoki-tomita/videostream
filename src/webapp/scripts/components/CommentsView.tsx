@@ -1,6 +1,5 @@
 import * as React from "react";
-import "react-dom";
-import { CSSProperties } from "react";
+import { CommentModel } from "../models/Comment";
 
 interface Comment {
   comment: string;
@@ -9,6 +8,7 @@ interface Comment {
 
 interface Props {
   now: () => number;
+  commentModel: CommentModel;
 }
 
 export class CommentsView extends React.Component<Props> {
@@ -17,16 +17,25 @@ export class CommentsView extends React.Component<Props> {
   }
   lastTime: number;
   renderer: CommentRenderer;
-  comments: Comment[];
+  comments: Comment[] = [];
 
   constructor(props: Props, context?: any) {
     super(props, context);
     this.renderer = new CommentRenderer();
+    const { commentModel } = this.props;
+    commentModel.onListUpdate(() => {
+      this.comments = commentModel.list;
+    });
+    commentModel.onCommentPost((post) => {
+      this.renderComment(post.comment);
+    });
+    commentModel.listComment();
+    this.animate();
   }
 
   render() {
     // cover parent.
-    const style: CSSProperties = {
+    const style: React.CSSProperties = {
       position: "absolute",
       top: "0px",
       left: "0px",
@@ -63,6 +72,9 @@ export class CommentsView extends React.Component<Props> {
   }
 
   private renderComments() {
+    if (!this.refs.canvas) {
+      return;
+    }
     const { now } = this.props;
     const time = now();
     const lastTime = this.lastTime;
@@ -90,7 +102,7 @@ class CommentRenderer {
   width: number;
   height: number;
   context: CanvasRenderingContext2D;
-  comments: CommentElement[];
+  comments: CommentElement[] = [];
 
   updateCanvas(canvas: HTMLCanvasElement) {
     const { width, height } = canvas;

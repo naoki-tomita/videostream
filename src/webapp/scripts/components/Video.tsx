@@ -1,5 +1,4 @@
 import * as React from "react";
-import "react-dom";
 
 interface Props {
   src: string;
@@ -15,14 +14,19 @@ export class Video extends React.Component<Props> {
 
   render() {
     const { src, width, onPause, onPlay } = this.props;
+    const style: React.CSSProperties = {
+      position: "relative"
+    }
     return (
       <video
+        style={style}
         ref="video"
         src={src} 
         width={width} 
         onPause={onPause} 
         onPlay={onPlay}
-        webkit-playsinline playsinline
+        webkit-playsinline="true"
+        playsInline
       >
       </video>
     );
@@ -31,59 +35,12 @@ export class Video extends React.Component<Props> {
   now() {
     return this.refs.video.currentTime;
   }
+
+  play() {
+    this.refs.video.play();
+  }
+
+  pause() {
+    this.refs.video.pause();
+  }
 }
-
-
-
-
-
-
-// import { query } from "./Query";
-// import { Observable, EventCallback } from "./Observable";
-
-
-
-
-
-
-
-
-// export class Video extends Observable {
-//   video: HTMLVideoElement;
-//   constructor() {
-//     super();
-//     const id = query("id");
-//     this.video = document.getElementById("video") as HTMLVideoElement;
-//     this.video.setAttribute("src", `/apis/videos/${id}`);
-//     this.initEvents();
-//   }
-
-//   initEvents() {
-//     this.video.addEventListener("play", () => {
-//       this.dispatch("play");
-//     });
-//     this.video.addEventListener("pause", () => {
-//       this.dispatch("pause");
-//     })
-//   }
-
-//   play() {
-//     this.video.play();
-//   }
-
-//   pause() {
-//     this.video.pause();
-//   }
-
-//   now() {
-//     return this.video.currentTime;
-//   }
-
-//   onPlay(cb: EventCallback) {
-//     this.on("play", cb);
-//   }
-
-//   onPause(cb: EventCallback) {
-//     this.on("pause", cb);
-//   }
-// }

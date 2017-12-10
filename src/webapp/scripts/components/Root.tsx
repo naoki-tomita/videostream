@@ -1,26 +1,42 @@
 import * as React from "react";
-import "react-dom";
-import { CommentsView } from "./CommentsView";
-import { Video } from "./Video";
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import { Player } from "./Player";
+import { Comment } from "./Comment";
+import { CommentModel } from "../models/Comment";
 
 interface Props {
-  src: string;
+  id: number;
 }
 
-class Root extends React.Component<Props> {
+export class Root extends React.Component<Props> {
   refs: {
-    video: Video,
+    player: Player;
+  }
+  commentModel: CommentModel;
+
+  constructor(props: Props, context?: any) {
+    super(props, context);
+    const { id } = this.props;
+    this.commentModel = new CommentModel({ id });
   }
 
   render() {
-    const { src } = this.props;
+    const { id } = this.props;
+    const commentModel = this.commentModel;
     return (
       <div>
-        <span>
-          <Video ref="video" src={src} width="520px"/>
-          <CommentsView now={this.refs.video.now}/>
-        </span>
-        <Comment />
+        <MuiThemeProvider>
+          <Player 
+            ref="player" 
+            src={`/apis/videos/${id}`} 
+            commentModel={commentModel}
+          />
+          <Comment 
+            id={id} 
+            now={() =>  this.refs.player.now()}
+            commentModel={commentModel}
+          />
+        </MuiThemeProvider>
       </div>
     );
   }
