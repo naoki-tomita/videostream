@@ -14,11 +14,11 @@ export class CommentModel extends Observable {
     super();
     this.id = options.id;
   }
+
   async listComment() {
     const id = this.id;
     const list = await fetch(`/apis/videos/${id}/comments`);
     this.list = await list.json() as Comment[];
-    console.log(this.list)
     this.dispatch("list");
   }
 

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { CommentsView } from "./CommentsView";
 import { Video } from "./Video";
-import { RaisedButton } from "material-ui";
+import { Button, Grid } from "semantic-ui-react";
 import { CommentModel } from "../models/Comment";
 
 interface Props {
@@ -25,9 +25,9 @@ export class Player extends React.Component<Props, State> {
     };
   }
 
-  now() {
+  get currentTime() {
     const { video } = this.refs;
-    return video.now();
+    return video.currentTime;
   }
 
   handlePlay() {
@@ -50,27 +50,31 @@ export class Player extends React.Component<Props, State> {
       display: "inline-block",
     }
     return (
-      <div>
-        <div style={style}>
-          <Video 
-            ref="video" 
-            src={src} 
-            width="520px" 
-            onPlay={this.handlePlay.bind(this)} 
-            onPause={this.handlePause.bind(this)}
-          />
-          <CommentsView 
-            now={this.now.bind(this)}
-            commentModel={commentModel}
-          />
-        </div>
-        <div>
-          <RaisedButton 
-            label={playLabel} 
-            onClick={this.onPlayClick.bind(this)} 
-          />
-        </div>
-      </div>
+      <Grid>
+        <Grid.Row centered={true}>
+          <Grid.Column>
+            <div style={style}>
+              <Video
+                ref="video"
+                src={src}
+                onPlay={this.handlePlay.bind(this)}
+                onPause={this.handlePause.bind(this)}
+              />
+              <CommentsView 
+                now={() => this.currentTime}
+                commentModel={commentModel}
+              />
+              </div>
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column>
+            <Button onClick={this.onPlayClick.bind(this)}>
+              {playLabel}
+            </Button>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
     );
   }
 

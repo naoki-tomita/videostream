@@ -2,7 +2,6 @@ import * as React from "react";
 
 interface Props {
   src: string;
-  width: string;
   onPlay?: () => void;
   onPause?: () => void;
 }
@@ -13,7 +12,7 @@ export class Video extends React.Component<Props> {
   }
 
   render() {
-    const { src, width, onPause, onPlay } = this.props;
+    const { src, onPause, onPlay } = this.props;
     const style: React.CSSProperties = {
       position: "relative"
     }
@@ -21,8 +20,8 @@ export class Video extends React.Component<Props> {
       <video
         style={style}
         ref="video"
-        src={src} 
-        width={width} 
+        width="100%"
+        src={src}
         onPause={onPause} 
         onPlay={onPlay}
         webkit-playsinline="true"
@@ -32,7 +31,7 @@ export class Video extends React.Component<Props> {
     );
   }
 
-  now() {
+  get currentTime() {
     return this.refs.video.currentTime;
   }
 

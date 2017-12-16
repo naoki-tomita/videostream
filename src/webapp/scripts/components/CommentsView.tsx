@@ -14,6 +14,7 @@ interface Props {
 export class CommentsView extends React.Component<Props> {
   refs: {
     canvas: HTMLCanvasElement;
+    wrapper: HTMLDivElement;
   }
   lastTime: number;
   renderer: CommentRenderer;
@@ -43,7 +44,9 @@ export class CommentsView extends React.Component<Props> {
       height: "100%",
     };
     return (
-      <canvas ref="canvas" style={style}></canvas>
+      <div ref="wrapper" style={style}>
+        <canvas ref="canvas"></canvas>
+      </div>
     );
   }
 
@@ -62,7 +65,9 @@ export class CommentsView extends React.Component<Props> {
   }
 
   updateCanvas() {
-    const { canvas } = this.refs
+    const { canvas, wrapper } = this.refs;
+    canvas.setAttribute("width", `${wrapper.clientWidth}px`);
+    canvas.setAttribute("height", `${wrapper.clientHeight}px`);
     this.renderer.updateCanvas(canvas);
   }
 
@@ -116,6 +121,7 @@ class CommentRenderer {
       text: comment,
       pos: {
         x: this.width,
+        // randomize position y.
         y: Math.random() * this.height,
       }
     });
@@ -123,15 +129,17 @@ class CommentRenderer {
 
   render() {
     this.context.clearRect(0, 0, this.width, this.height);
-    this.comments.forEach(c => this.renderComment(c));
-    this.comments.forEach(c => c.pos.x -= 1);
+    this.comments.forEach(c => {
+      this.renderComment(c);
+      c.pos.x -= 3;
+    });
     this.comments = this.comments.filter(c => c.pos.x >= 0);
   }
 
-  renderComment(comment: CommentElement) {
-    this.context.font = "15px メイリオ";
+  renderComment(comment: CommentElement) {;
+    this.context.font = `30px Quicksand, 游ゴシック体, Yu Gothic, YuGothic, ヒラギノ角ゴシック Pro, Hiragino Kaku Gothic Pro, メイリオ, Meiryo, Osaka, ＭＳ Ｐゴシック, MS PGothic, sans-serif`;
     this.context.strokeStyle = "white";
-    this.context.lineWidth = 3;
+    this.context.lineWidth = 5;
     this.context.fillStyle = "black";
     this.context.strokeText(comment.text, comment.pos.x, comment.pos.y);
     this.context.fillText(comment.text, comment.pos.x, comment.pos.y);

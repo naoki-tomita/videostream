@@ -23,7 +23,7 @@ export async function staticFile({
     });
     response.end(data);
   } catch (e) {
-    console.log(e);
+    console.error(e);
     notFound(response);
   }
 }

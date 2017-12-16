@@ -40,6 +40,7 @@ export async function progressiveResponse({
         resolve();
       });
       stream.on("error", (e) => {
+        console.error(e);
         reject(e);
       });
     });

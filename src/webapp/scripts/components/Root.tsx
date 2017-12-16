@@ -1,7 +1,7 @@
 import * as React from "react";
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import { Container, Grid } from 'semantic-ui-react';
 import { Player } from "./Player";
-import { Comment } from "./Comment";
+import { CommentInput } from "./CommentInput";
 import { CommentModel } from "../models/Comment";
 
 interface Props {
@@ -24,20 +24,28 @@ export class Root extends React.Component<Props> {
     const { id } = this.props;
     const commentModel = this.commentModel;
     return (
-      <div>
-        <MuiThemeProvider>
-          <Player 
-            ref="player" 
-            src={`/apis/videos/${id}`} 
-            commentModel={commentModel}
-          />
-          <Comment 
-            id={id} 
-            now={() =>  this.refs.player.now()}
-            commentModel={commentModel}
-          />
-        </MuiThemeProvider>
-      </div>
+      <Container>
+        <Grid>
+          <Grid.Row>
+            <Grid.Column>
+              <Player
+                ref="player" 
+                src={`/apis/videos/${id}`} 
+                commentModel={commentModel}
+              />
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column>
+              <CommentInput 
+                id={id} 
+                now={() =>  this.refs.player.currentTime}
+                commentModel={commentModel}
+              />
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+      </Container>
     );
   }
 }
