@@ -1,5 +1,5 @@
 
-export type EventCallback = () => void;
+export type EventCallback = (...params: any[]) => void;
 
 export class Observable {
   private events: { 
@@ -11,7 +11,7 @@ export class Observable {
     this.events[type].push(cb);
   }
 
-  dispatch(type: string) {
-    this.events[type] && this.events[type].forEach(e => e());
+  dispatch(type: string, params?: any[]) {
+    this.events[type] && this.events[type].forEach(e => e(...params));
   }
 }
