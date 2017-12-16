@@ -1,3 +1,5 @@
+[![Build Status](https://semaphoreci.com/api/v1/naoki-tomita/videostream/branches/master/badge.svg)](https://semaphoreci.com/naoki-tomita/videostream)
+
 # videostream
 * 動画のプログレッシブダウンロードを行うことができるサーバープログラムとおまけです。
 
