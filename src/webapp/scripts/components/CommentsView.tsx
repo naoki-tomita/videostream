@@ -100,7 +100,8 @@ interface CommentElement {
   pos: {
     x: number;
     y: number;
-  }
+  },
+  width: number;
 }
 
 class CommentRenderer {
@@ -123,7 +124,8 @@ class CommentRenderer {
         x: this.width,
         // randomize position y.
         y: Math.random() * this.height,
-      }
+      },
+      width: this.measureText(comment),
     });
   }
 
@@ -133,15 +135,19 @@ class CommentRenderer {
       this.renderComment(c);
       c.pos.x -= 3;
     });
-    this.comments = this.comments.filter(c => c.pos.x >= 0);
+    this.comments = this.comments.filter(c => c.pos.x + c.width >= 0);
   }
 
-  renderComment(comment: CommentElement) {;
+  renderComment(comment: CommentElement) {
     this.context.font = `30px Quicksand, 游ゴシック体, Yu Gothic, YuGothic, ヒラギノ角ゴシック Pro, Hiragino Kaku Gothic Pro, メイリオ, Meiryo, Osaka, ＭＳ Ｐゴシック, MS PGothic, sans-serif`;
     this.context.strokeStyle = "white";
     this.context.lineWidth = 5;
     this.context.fillStyle = "black";
     this.context.strokeText(comment.text, comment.pos.x, comment.pos.y);
     this.context.fillText(comment.text, comment.pos.x, comment.pos.y);
+  }
+
+  measureText(text: string): number {
+    return this.context.measureText(text).width;
   }
 }

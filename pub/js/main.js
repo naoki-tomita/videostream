@@ -58056,7 +58056,8 @@ var CommentRenderer = /** @class */ (function () {
                 x: this.width,
                 // randomize position y.
                 y: Math.random() * this.height,
-            }
+            },
+            width: this.measureText(comment),
         });
     };
     CommentRenderer.prototype.render = function () {
@@ -58066,16 +58067,18 @@ var CommentRenderer = /** @class */ (function () {
             _this.renderComment(c);
             c.pos.x -= 3;
         });
-        this.comments = this.comments.filter(function (c) { return c.pos.x >= 0; });
+        this.comments = this.comments.filter(function (c) { return c.pos.x + c.width >= 0; });
     };
     CommentRenderer.prototype.renderComment = function (comment) {
-        ;
         this.context.font = "30px Quicksand, \u6E38\u30B4\u30B7\u30C3\u30AF\u4F53, Yu Gothic, YuGothic, \u30D2\u30E9\u30AE\u30CE\u89D2\u30B4\u30B7\u30C3\u30AF Pro, Hiragino Kaku Gothic Pro, \u30E1\u30A4\u30EA\u30AA, Meiryo, Osaka, \uFF2D\uFF33 \uFF30\u30B4\u30B7\u30C3\u30AF, MS PGothic, sans-serif";
         this.context.strokeStyle = "white";
         this.context.lineWidth = 5;
         this.context.fillStyle = "black";
         this.context.strokeText(comment.text, comment.pos.x, comment.pos.y);
         this.context.fillText(comment.text, comment.pos.x, comment.pos.y);
+    };
+    CommentRenderer.prototype.measureText = function (text) {
+        return this.context.measureText(text).width;
     };
     return CommentRenderer;
 }());

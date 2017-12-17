@@ -15,6 +15,9 @@ router.use("/:id/comments", commentRouter);
 // when specified only videoId, return video.
 router.get("/:id", async (req, res, next) => {
   let rangeStr = req.headers.range;
+  if (!rangeStr) {
+    rangeStr = "bytes=0-";
+  }
   if (Array.isArray(rangeStr)) {
     rangeStr = rangeStr[0];
   }
